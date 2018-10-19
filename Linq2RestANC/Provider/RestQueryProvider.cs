@@ -28,26 +28,29 @@ namespace Linq2Rest.Provider
 		private readonly IExpressionProcessor _expressionProcessor;
 		private readonly IMemberNameResolver _memberNameResolver;
 		private readonly IEnumerable<IValueWriter> _valueWriters;
+		private readonly IEnumerable<IMethodCallWriter> _methodCallWriters;
 		private readonly ParameterBuilder _parameterBuilder;
 
-		public RestQueryProvider(IRestClient client, ISerializerFactory serializerFactory, IExpressionProcessor expressionProcessor, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Type sourceType)
+		public RestQueryProvider(IRestClient client, ISerializerFactory serializerFactory, IExpressionProcessor expressionProcessor, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Type sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(expressionProcessor != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 
 			Client = client;
 			_serializerFactory = serializerFactory;
 			_expressionProcessor = expressionProcessor;
 			_memberNameResolver = memberNameResolver;
 			_valueWriters = valueWriters;
+			_methodCallWriters = methodCallWriters;
 			_parameterBuilder = new ParameterBuilder(client.ServiceBase, sourceType ?? typeof(T));
 		}
 
 		protected IRestClient Client { get; private set; }
 
-		protected abstract Func<IRestClient, ISerializerFactory, IMemberNameResolver, IEnumerable<IValueWriter>, Expression, Type, IQueryable<TResult>> CreateQueryable<TResult>();
+		protected abstract Func<IRestClient, ISerializerFactory, IMemberNameResolver, IEnumerable<IValueWriter>, IEnumerable<IMethodCallWriter>, Expression, Type, IQueryable<TResult>> CreateQueryable<TResult>();
 
 		protected ISerializer<T> GetSerializer(Type aliasType)
 		{
@@ -83,7 +86,7 @@ namespace Linq2Rest.Provider
 				throw new ArgumentNullException("expression");
 			}
 
-			return CreateQueryable<T>()(Client, _serializerFactory, _memberNameResolver, _valueWriters, expression, _parameterBuilder.SourceType);
+			return CreateQueryable<T>()(Client, _serializerFactory, _memberNameResolver, _valueWriters, _methodCallWriters, expression, _parameterBuilder.SourceType);
 		}
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Cannot dispose here.")]
@@ -94,7 +97,7 @@ namespace Linq2Rest.Provider
 				throw new ArgumentNullException("expression");
 			}
 
-			return CreateQueryable<TResult>()(Client, _serializerFactory, _memberNameResolver, _valueWriters, expression, _parameterBuilder.SourceType); // new RestGetQueryable<TResult>(Client, _serializerFactory, expression);
+			return CreateQueryable<TResult>()(Client, _serializerFactory, _memberNameResolver, _valueWriters, _methodCallWriters, expression, _parameterBuilder.SourceType); // new RestGetQueryable<TResult>(Client, _serializerFactory, expression);
 		}
 
 		public override object Execute(Expression expression)
@@ -142,8 +145,8 @@ namespace Linq2Rest.Provider
 	[ContractClassFor(typeof(RestQueryProvider<>))]
 	internal abstract class RestQueryProviderContracts<T> : RestQueryProvider<T>
 	{
-		protected RestQueryProviderContracts(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IExpressionProcessor expressionProcessor, Type sourceType)
-			: base(client, serializerFactory, expressionProcessor, memberNameResolver, valueWriters, sourceType)
+		protected RestQueryProviderContracts(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, IExpressionProcessor expressionProcessor, Type sourceType)
+			: base(client, serializerFactory, expressionProcessor, memberNameResolver, valueWriters, methodCallWriters, sourceType)
 		{
 		}
 

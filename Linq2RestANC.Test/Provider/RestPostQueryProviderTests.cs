@@ -37,7 +37,7 @@ namespace Linq2Rest.Tests.Provider
 			_mockClient.SetupGet(x => x.ServiceBase).Returns(new Uri("http://localhost"));
 			_mockClient.Setup(x => x.Post(It.IsAny<Uri>(), It.IsAny<Stream>())).Returns("[]".ToStream());
 			var memberNameResolver = new MemberNameResolver();
-			_provider = new RestPostQueryProvider<FakeItem>(_mockClient.Object, new TestSerializerFactory(memberNameResolver), new ExpressionProcessor(new ExpressionWriter(memberNameResolver, Enumerable.Empty<IValueWriter>()), memberNameResolver), memberNameResolver, Enumerable.Empty<IValueWriter>(), _inputData, typeof(FakeItem));
+			_provider = new RestPostQueryProvider<FakeItem>(_mockClient.Object, new TestSerializerFactory(memberNameResolver), new ExpressionProcessor(new ExpressionWriter(memberNameResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>()), memberNameResolver), memberNameResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>(), _inputData, typeof(FakeItem));
 		}
 
 		[Test]

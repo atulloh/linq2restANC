@@ -24,7 +24,7 @@ namespace Linq2Rest.Provider
 		private readonly RestPutQueryProvider<T> _restPutQueryProvider;
 
 		public RestPutQueryable(IRestClient client, ISerializerFactory serializerFactory, Expression expression, Stream inputData, Type sourceType)
-			: this(client, serializerFactory, new MemberNameResolver(), new IValueWriter[0], expression, inputData, sourceType)
+			: this(client, serializerFactory, new MemberNameResolver(), new IValueWriter[0], new IMethodCallWriter[0],  expression, inputData, sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
@@ -32,22 +32,24 @@ namespace Linq2Rest.Provider
 			CustomContract.Requires(inputData != null);
 		}
 
-		public RestPutQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Expression expression, Stream inputData, Type sourceType)
-			: base(client, serializerFactory, memberNameResolver, valueWriters)
+		public RestPutQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Expression expression, Stream inputData, Type sourceType)
+			: base(client, serializerFactory, memberNameResolver, valueWriters, methodCallWriters)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(memberNameResolver != null);
 			CustomContract.Requires(expression != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 			CustomContract.Requires(inputData != null);
 
 			_restPutQueryProvider = new RestPutQueryProvider<T>(
 				client,
 				serializerFactory,
-				new ExpressionProcessor(new ExpressionWriter(memberNameResolver, ValueWriters), memberNameResolver),
+				new ExpressionProcessor(new ExpressionWriter(memberNameResolver, ValueWriters, MethodCallWriters), memberNameResolver),
 				memberNameResolver,
 				ValueWriters,
+				MethodCallWriters,
 				inputData,
 				sourceType);
 			Provider = _restPutQueryProvider;

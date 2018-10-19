@@ -22,34 +22,37 @@ namespace Linq2Rest.Provider
 	{
 		private readonly RestDeleteQueryProvider<T> _restDeleteQueryProvider;
 
-		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IEnumerable<IValueWriter> valueWriters, Type sourceType)
-			: this(client, serializerFactory, new MemberNameResolver(), valueWriters, sourceType)
+		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Type sourceType)
+			: this(client, serializerFactory, new MemberNameResolver(), valueWriters, methodCallWriters, sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 		}
 
-		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Type sourceType)
-			: base(client, serializerFactory, memberNameResolver, valueWriters)
+		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Type sourceType)
+			: base(client, serializerFactory, memberNameResolver, valueWriters, methodCallWriters)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(memberNameResolver != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 
-			_restDeleteQueryProvider = new RestDeleteQueryProvider<T>(client, serializerFactory, new ExpressionProcessor(new ExpressionWriter(MemberNameResolver, ValueWriters), MemberNameResolver), MemberNameResolver, ValueWriters, sourceType);
+			_restDeleteQueryProvider = new RestDeleteQueryProvider<T>(client, serializerFactory, new ExpressionProcessor(new ExpressionWriter(MemberNameResolver, ValueWriters, MethodCallWriters), MemberNameResolver), MemberNameResolver, ValueWriters, MethodCallWriters, sourceType);
 			Provider = _restDeleteQueryProvider;
 			Expression = Expression.Constant(this);
 		}
 
-		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Expression expression, Type sourceType)
-			: this(client, serializerFactory, memberNameResolver, valueWriters, sourceType)
+		public RestDeleteQueryable(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Expression expression, Type sourceType)
+			: this(client, serializerFactory, memberNameResolver, valueWriters, methodCallWriters, sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(memberNameResolver != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 			CustomContract.Requires(expression != null);
 
 			Expression = expression;

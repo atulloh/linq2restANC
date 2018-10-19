@@ -22,16 +22,17 @@ namespace Linq2Rest.Provider
 
 	internal class RestDeleteQueryProvider<T> : RestQueryProvider<T>
 	{
-		public RestDeleteQueryProvider(IRestClient client, ISerializerFactory serializerFactory, IExpressionProcessor expressionProcessor, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Type sourceType)
-			: base(client, serializerFactory, expressionProcessor, memberNameResolver, valueWriters, sourceType)
+		public RestDeleteQueryProvider(IRestClient client, ISerializerFactory serializerFactory, IExpressionProcessor expressionProcessor, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Type sourceType)
+			: base(client, serializerFactory, expressionProcessor, memberNameResolver, valueWriters, methodCallWriters, sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(expressionProcessor != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(valueWriters != null);
 		}
 
-		protected override Func<IRestClient, ISerializerFactory, IMemberNameResolver, IEnumerable<IValueWriter>, Expression, Type, IQueryable<TResult>> CreateQueryable<TResult>()
+		protected override Func<IRestClient, ISerializerFactory, IMemberNameResolver, IEnumerable<IValueWriter>, IEnumerable<IMethodCallWriter>, Expression, Type, IQueryable<TResult>> CreateQueryable<TResult>()
 		{
 			return InnerCreateQueryable<TResult>;
 		}
@@ -59,16 +60,17 @@ namespace Linq2Rest.Provider
 			return resultSet;
 		}
 
-		private IQueryable<TResult> InnerCreateQueryable<TResult>(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, Expression expression, Type sourceType)
+		private IQueryable<TResult> InnerCreateQueryable<TResult>(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters, Expression expression, Type sourceType)
 		{
 			CustomContract.Requires(client != null);
 			CustomContract.Requires(serializerFactory != null);
 			CustomContract.Requires(memberNameResolver != null);
 			CustomContract.Requires(valueWriters != null);
+			CustomContract.Requires(methodCallWriters != null);
 			CustomContract.Requires(expression != null);
 			CustomContract.Requires(sourceType != null);
 
-			return new RestDeleteQueryable<TResult>(client, serializerFactory, memberNameResolver, valueWriters, expression, sourceType);
+			return new RestDeleteQueryable<TResult>(client, serializerFactory, memberNameResolver, valueWriters, methodCallWriters, expression, sourceType);
 		}
 	}
 }

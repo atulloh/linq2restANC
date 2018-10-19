@@ -35,7 +35,7 @@ namespace Linq2Rest
 		/// Initializes a new instance of the <see cref="ODataExpressionConverter"/> class.
 		/// </summary>
 		public ODataExpressionConverter()
-			: this(new IValueWriter[0], new IValueExpressionFactory[0])
+			: this(new IValueWriter[0], new IValueExpressionFactory[0], new IMethodCallWriter[0])
 		{
 		}
 
@@ -45,12 +45,13 @@ namespace Linq2Rest
 		/// <param name="valueWriters">The custom value writers to use.</param>
 		/// <param name="valueExpressionFactories">The custom expression writers to use.</param>
 		/// <param name="memberNameResolver">The custom <see cref="IMemberNameResolver"/> to use.</param>
-		public ODataExpressionConverter(IEnumerable<IValueWriter> valueWriters, IEnumerable<IValueExpressionFactory> valueExpressionFactories, IMemberNameResolver memberNameResolver = null)
+		public ODataExpressionConverter(IEnumerable<IValueWriter> valueWriters, IEnumerable<IValueExpressionFactory> valueExpressionFactories, IEnumerable<IMethodCallWriter> methodVCallWriters, IMemberNameResolver memberNameResolver = null)
 		{
 			var writers = (valueWriters ?? Enumerable.Empty<IValueWriter>()).ToArray();
 			var expressionFactories = (valueExpressionFactories ?? Enumerable.Empty<IValueExpressionFactory>()).ToArray();
-			var nameResolver = memberNameResolver ?? new MemberNameResolver();
-			_writer = new ExpressionWriter(nameResolver, writers);
+		    var methodCallWriters = (methodVCallWriters ?? Enumerable.Empty<IMethodCallWriter>()).ToArray();
+            var nameResolver = memberNameResolver ?? new MemberNameResolver();
+			_writer = new ExpressionWriter(nameResolver, writers, methodCallWriters);
 			_parser = new FilterExpressionFactory(nameResolver, expressionFactories);
 		}
 

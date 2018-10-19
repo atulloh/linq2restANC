@@ -17,7 +17,7 @@ namespace Linq2Rest.Provider.Writers
 	using System.Linq.Expressions;
 
 	[ContractClass(typeof(MethodCallWriterContracts))]
-	internal interface IMethodCallWriter
+	public interface IMethodCallWriter
 	{
 		bool CanHandle(MethodCallExpression expression);
 

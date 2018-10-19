@@ -32,7 +32,7 @@ namespace Linq2Rest.Provider
 		/// <param name="client">The <see cref="IRestClient"/> to use for requests.</param>
 		/// <param name="serializerFactory">The <see cref="ISerializerFactory"/> to create <see cref="ISerializer{T}"/> to handling responses.</param>
 		public RestContext(IRestClient client, ISerializerFactory serializerFactory)
-			: this(client, serializerFactory, new MemberNameResolver(), new IntValueWriter[0])
+			: this(client, serializerFactory, new MemberNameResolver(), new IntValueWriter[0], new IMethodCallWriter[0])
 		{
 			CustomContract.Requires<ArgumentNullException>(client != null);
 			CustomContract.Requires<ArgumentNullException>(serializerFactory != null);
@@ -44,29 +44,31 @@ namespace Linq2Rest.Provider
 		/// <param name="client">The <see cref="IRestClient"/> to use for requests.</param>
 		/// <param name="serializerFactory">The <see cref="ISerializerFactory"/> to create <see cref="ISerializer{T}"/> to handling responses.</param>
 		/// <param name="valueWriters">The <see cref="IEnumerable{IValueWriter}"/> for writing custom values.</param>
-		public RestContext(IRestClient client, ISerializerFactory serializerFactory, IEnumerable<IValueWriter> valueWriters)
-			: this(client, serializerFactory, new MemberNameResolver(), valueWriters)
+		public RestContext(IRestClient client, ISerializerFactory serializerFactory, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters)
+			: this(client, serializerFactory, new MemberNameResolver(), valueWriters, methodCallWriters)
 		{
 			CustomContract.Requires<ArgumentNullException>(client != null);
 			CustomContract.Requires<ArgumentNullException>(serializerFactory != null);
 			CustomContract.Requires<ArgumentNullException>(valueWriters != null);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="RestContext{T}"/> class.
-		/// </summary>
-		/// <param name="client">The <see cref="IRestClient"/> to use for requests.</param>
-		/// <param name="serializerFactory">The <see cref="ISerializerFactory"/> to create <see cref="ISerializer{T}"/> to handling responses.</param>
-		/// <param name="memberNameResolver">The <see cref="IMemberNameResolver"/> to use for alias resolution.</param>
-		/// <param name="valueWriters">The <see cref="IEnumerable{IValueWriter}"/> for writing custom values.</param>
-		public RestContext(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters)
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="RestContext{T}"/> class.
+	    /// </summary>
+	    /// <param name="client">The <see cref="IRestClient"/> to use for requests.</param>
+	    /// <param name="serializerFactory">The <see cref="ISerializerFactory"/> to create <see cref="ISerializer{T}"/> to handling responses.</param>
+	    /// <param name="memberNameResolver">The <see cref="IMemberNameResolver"/> to use for alias resolution.</param>
+	    /// <param name="valueWriters">The <see cref="IEnumerable{IValueWriter}"/> for writing custom values.</param>
+	    /// <param name="methodCallWriters">The <see cref="IEnumerable{IMethodCallWriter}"/> for writer custom methods.</param>
+	    public RestContext(IRestClient client, ISerializerFactory serializerFactory, IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters)
 		{
 			CustomContract.Requires<ArgumentNullException>(client != null);
 			CustomContract.Requires<ArgumentNullException>(serializerFactory != null);
 			CustomContract.Requires<ArgumentNullException>(memberNameResolver != null);
 			CustomContract.Requires<ArgumentNullException>(valueWriters != null);
+			CustomContract.Requires<ArgumentNullException>(methodCallWriters != null);
 
-			_getQueryable = new RestGetQueryable<T>(client, serializerFactory, memberNameResolver, valueWriters, typeof(T));
+			_getQueryable = new RestGetQueryable<T>(client, serializerFactory, memberNameResolver, valueWriters, methodCallWriters, typeof(T));
 		}
 
 		/// <summary>

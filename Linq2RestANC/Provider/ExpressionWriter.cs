@@ -34,31 +34,34 @@ namespace Linq2Rest.Provider
 
 		private readonly IMemberNameResolver _memberNameResolver;
 
-		public ExpressionWriter(IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters)
+		public ExpressionWriter(IMemberNameResolver memberNameResolver, IEnumerable<IValueWriter> valueWriters, IEnumerable<IMethodCallWriter> methodCallWriters)
 		{
 			CustomContract.Requires<ArgumentNullException>(memberNameResolver != null);
 
 			_valueWriter = new ParameterValueWriter(valueWriters ?? new IntValueWriter[0]);
 			_memberNameResolver = memberNameResolver;
-			_methodCallWriters = new IMethodCallWriter[]
-								 {
-									 new EqualsMethodWriter(),
-									 new StringReplaceMethodWriter(),
-									 new StringTrimMethodWriter(),
-									 new StringToLowerMethodWriter(),
-									 new StringToUpperMethodWriter(),
-									 new StringSubstringMethodWriter(),
-									 new StringContainsMethodWriter(),
-									 new StringIndexOfMethodWriter(),
-									 new StringEndsWithMethodWriter(),
-									 new StringStartsWithMethodWriter(),
-									 new MathRoundMethodWriter(),
-									 new MathFloorMethodWriter(),
-									 new MathCeilingMethodWriter(),
-									 new EmptyAnyMethodWriter(),
-									 new AnyAllMethodWriter(),
-									 new DefaultMethodWriter(_valueWriter)
-								 };
+		    _methodCallWriters =
+		        (methodCallWriters ?? new List<IMethodCallWriter>())
+		        .Concat(new IMethodCallWriter[]
+		        {
+		            new EqualsMethodWriter(),
+		            new StringReplaceMethodWriter(),
+		            new StringTrimMethodWriter(),
+		            new StringToLowerMethodWriter(),
+		            new StringToUpperMethodWriter(),
+		            new StringSubstringMethodWriter(),
+		            new StringContainsMethodWriter(),
+		            new StringIndexOfMethodWriter(),
+		            new StringEndsWithMethodWriter(),
+		            new StringStartsWithMethodWriter(),
+		            new MathRoundMethodWriter(),
+		            new MathFloorMethodWriter(),
+		            new MathCeilingMethodWriter(),
+		            new EmptyAnyMethodWriter(),
+		            new AnyAllMethodWriter(),
+		            new DefaultMethodWriter(_valueWriter)
+		        })
+		        .ToArray();
 		}
 
 		public string Write(Expression expression, Type sourceType)

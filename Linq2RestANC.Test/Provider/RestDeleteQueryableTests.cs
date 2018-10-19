@@ -36,7 +36,7 @@ namespace Linq2Rest.Tests.Provider
 			_mockClient = new Mock<IRestClient>();
 			_mockClient.SetupGet(x => x.ServiceBase).Returns(new Uri("http://localhost"));
 			_mockClient.Setup(x => x.Delete(It.IsAny<Uri>())).Returns("[]".ToStream());
-			_deleteQueryable = new RestDeleteQueryable<FakeItem>(_mockClient.Object, new TestSerializerFactory(mockResolver), mockResolver, Enumerable.Empty<IValueWriter>() , expression, typeof(FakeItem));
+			_deleteQueryable = new RestDeleteQueryable<FakeItem>(_mockClient.Object, new TestSerializerFactory(mockResolver), mockResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>(), expression, typeof(FakeItem));
 		}
 
 		[Test]

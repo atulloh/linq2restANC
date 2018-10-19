@@ -34,7 +34,7 @@ namespace Linq2Rest.Tests.Provider
 			_mockClient = new Mock<IRestClient>();
 			_mockClient.SetupGet(x => x.ServiceBase).Returns(new Uri("http://localhost"));
 			_mockClient.Setup(x => x.Get(It.IsAny<Uri>())).Returns("[]".ToStream());
-			_getQueryable = new RestGetQueryable<FakeItem>(_mockClient.Object, new TestSerializerFactory(mockResolver), mockResolver, Enumerable.Empty<IValueWriter>(), typeof(FakeItem));
+			_getQueryable = new RestGetQueryable<FakeItem>(_mockClient.Object, new TestSerializerFactory(mockResolver), mockResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>(), typeof(FakeItem));
 		}
 
 		[Test]

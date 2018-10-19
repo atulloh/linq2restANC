@@ -33,7 +33,7 @@ namespace Linq2Rest.Tests.Provider
 			_mockClient = new Mock<IRestClient>();
 			_mockClient.SetupGet(x => x.ServiceBase).Returns(new Uri("http://localhost"));
 			var memberNameResolver = new MemberNameResolver();
-			_provider = new RestGetQueryProvider<FakeItem>(_mockClient.Object, new TestSerializerFactory(memberNameResolver), new ExpressionProcessor(new ExpressionWriter(memberNameResolver, Enumerable.Empty<IValueWriter>()), memberNameResolver), memberNameResolver, Enumerable.Empty<IValueWriter>(), typeof(FakeItem));
+			_provider = new RestGetQueryProvider<FakeItem>(_mockClient.Object, new TestSerializerFactory(memberNameResolver), new ExpressionProcessor(new ExpressionWriter(memberNameResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>()), memberNameResolver), memberNameResolver, Enumerable.Empty<IValueWriter>(), Enumerable.Empty<IMethodCallWriter>(), typeof(FakeItem));
 		}
 
 		[Test]
